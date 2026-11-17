@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Auto-Agent - Connexion" />
+  <title>Auto-Agent | Connexion</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+  <section class="login-screen" id="login-screen">
+    <div class="login-backdrop"></div>
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="navbar-logo">A</div>
+        <div>
+          <p class="login-eyebrow">Accès sécurisé</p>
+          <h1>Auto-Agent</h1>
+        </div>
+      </div>
+
+      <p class="login-copy">
+        Connectez-vous pour accéder au catalogue, au chatbot et aux outils de gestion.
+      </p>
+
+      <form id="login-form" class="login-form">
+        <div class="form-group full-width">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="ayoubadoini1994@gmail.com" autocomplete="email" required />
+        </div>
+        <div class="form-group full-width">
+          <label for="login-password">Mot de passe</label>
+          <input type="password" id="login-password" placeholder="123456" autocomplete="current-password" required />
+        </div>
+        <div class="login-actions full-width">
+          <button type="submit" class="btn btn-primary btn-lg">Se connecter</button>
+        </div>
+        <p class="login-hint">Compte de démonstration uniquement: ayoubadoini1994@gmail.com / 123456</p>
+        <p class="login-error" id="login-error" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <script src="/static/js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+# ─── Auto-Agent — Python dependencies ────────────────────────────────────────
+# Install with: pip install -r requirements.txt
+
+# Web framework
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+
+# ORM / DB
+sqlmodel>=0.0.19
+sqlalchemy[asyncio]>=2.0.0
+asyncpg>=0.29.0          # driver async pour PostgreSQL
+psycopg2-binary>=2.9.9   # driver sync pour setup_db.py
+
+# MCP Server
+fastmcp>=0.1.0
+
+# Config
+python-dotenv>=1.0.0
+
+# Password hashing (optionnel mais recommandé pour la prod)
+passlib[bcrypt]>=1.7.4

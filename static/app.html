@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Auto-Agent - Gestion des voitures" />
+  <title>Auto-Agent | Gestion des voitures</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="authenticated">
+
+  <nav class="navbar site-shell" id="site-navbar">
+    <div class="navbar-inner">
+      <a href="#" class="navbar-brand" onclick="showSection('catalogue')">
+        <div class="navbar-logo">A</div>
+        <span class="navbar-title">Auto-Agent</span>
+      </a>
+      <div class="navbar-nav">
+        <button class="nav-btn active" id="nav-catalogue" onclick="showSection('catalogue')">Catalogue</button>
+        <button class="nav-btn" id="nav-ajouter" onclick="showSection('ajouter')">+ Ajouter</button>
+        <button class="nav-btn" id="nav-recommander" onclick="showSection('recommander')">Recommander</button>
+        <button class="nav-btn nav-logout" type="button" onclick="handleLogout()">Déconnexion</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <div class="app-shell site-shell" id="app-shell">
+    <main class="main-container">
+      <section class="page-section active" id="section-catalogue">
+        <div class="stats-row" id="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon blue">&#128663;</div>
+            <div class="stat-info">
+              <h3 id="stat-total">0</h3>
+              <p>Total voitures</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">&#9989;</div>
+            <div class="stat-info">
+              <h3 id="stat-disponible">0</h3>
+              <p>Disponibles</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple">&#128176;</div>
+            <div class="stat-info">
+              <h3 id="stat-prix-moyen">0 DT</h3>
+              <p>Prix moyen</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">&#9889;</div>
+            <div class="stat-info">
+              <h3 id="stat-marques">0</h3>
+              <p>Marques</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="icon blue">&#128663;</span>
+            Catalogue
+          </h2>
+          <button class="btn btn-primary" onclick="showSection('ajouter')">+ Ajouter une voiture</button>
+        </div>
+
+        <div id="car-grid" class="car-grid">
+          <div class="loading-overlay">
+            <div class="spinner"></div>
+            <span>Chargement du catalogue...</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-section" id="section-ajouter">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="icon green">+</span>
+            Ajouter une voiture
+          </h2>
+        </div>
+
+        <div class="form-card">
+          <form id="add-car-form" class="form-grid" onsubmit="handleAddCar(event)">
+            <div class="form-group">
+              <label for="f-marque">Marque</label>
+              <input type="text" id="f-marque" placeholder="Ex: BMW" required />
+            </div>
+            <div class="form-group">
+              <label for="f-modele">Modele</label>
+              <input type="text" id="f-modele" placeholder="Ex: Serie 3" required />
+            </div>
+            <div class="form-group">
+              <label for="f-annee">Annee</label>
+              <input type="number" id="f-annee" placeholder="2024" min="1900" max="2030" required />
+            </div>
+            <div class="form-group">
+              <label for="f-prix">Prix (DT)</label>
+              <input type="number" id="f-prix" placeholder="25000" min="0" step="100" required />
+            </div>
+            <div class="form-group">
+              <label for="f-km">Kilometrage</label>
+              <input type="number" id="f-km" placeholder="50000" min="0" required />
+            </div>
+            <div class="form-group">
+              <label for="f-carburant">Carburant</label>
+              <select id="f-carburant" required>
+                <option value="Essence">Essence</option>
+                <option value="Diesel">Diesel</option>
+                <option value="Electrique">Electrique</option>
+                <option value="Hybride">Hybride</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="f-couleur">Couleur</label>
+              <input type="text" id="f-couleur" placeholder="Noir" required />
+            </div>
+            <div class="form-group">
+              <label for="f-portes">Nombre de portes</label>
+              <select id="f-portes" required>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5" selected>5</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="f-transmission">Transmission</label>
+              <select id="f-transmission" required>
+                <option value="Manuelle">Manuelle</option>
+                <option value="Automatique">Automatique</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="f-statut">Statut</label>
+              <select id="f-statut" required>
+                <option value="disponible">Disponible</option>
+                <option value="vendu">Vendu</option>
+                <option value="reserve">Reserve</option>
+              </select>
+            </div>
+            <div class="form-group full-width">
+              <label for="f-options">Options (separees par des virgules)</label>
+              <input type="text" id="f-options" placeholder="GPS, Toit ouvrant, Sieges cuir" />
+            </div>
+            <div class="form-group full-width">
+              <label for="f-image">URL Image (optionnel)</label>
+              <input type="url" id="f-image" placeholder="https://example.com/image.jpg" />
+              <div id="f-image-preview" class="image-preview" style="display:none; margin-top:8px;"></div>
+            </div>
+            <div class="form-actions full-width">
+              <button type="submit" class="btn btn-primary btn-lg">Ajouter au catalogue</button>
+              <button type="button" class="btn btn-outline btn-lg" onclick="showSection('catalogue')">Annuler</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="page-section" id="section-recommander">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="icon purple">&#9733;</span>
+            Recommandation par budget
+          </h2>
+        </div>
+
+        <div class="budget-finder">
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Indiquez votre budget et l'agent IA trouvera les meilleures voitures pour vous.
+          </p>
+          <div class="budget-value" id="budget-display">15 000 DT</div>
+          <input
+            type="range"
+            class="budget-slider"
+            id="budget-slider"
+            min="1000"
+            max="200000"
+            step="500"
+            value="15000"
+            oninput="updateBudgetDisplay(this.value)"
+          />
+          <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-bottom:1rem;">
+            <span>1 000 DT</span>
+            <span>200 000 DT</span>
+          </div>
+          <button class="btn btn-primary btn-lg" onclick="handleRecommend()" style="width:100%;">
+            Trouver des voitures
+          </button>
+        </div>
+
+        <div id="recommend-results" class="car-grid"></div>
+      </section>
+    </main>
+
+    <aside class="chatbot-panel" aria-label="Assistant conversationnel">
+      <div class="chatbot-card">
+        <div class="chatbot-header">
+          <div>
+            <p class="chatbot-eyebrow">Assistant</p>
+            <h2>Chatbot Auto-Agent</h2>
+          </div>
+          <div class="chatbot-status"><span></span>En ligne</div>
+        </div>
+
+        <p class="chatbot-intro">
+          Pose une question sur le stock, un budget, une marque ou le type de carburant.
+        </p>
+
+        <div class="chatbot-suggestions">
+          <button type="button" class="chat-suggestion" data-chat-prompt="Montre-moi les voitures sous 15000 DT">Sous 15 000 DT</button>
+          <button type="button" class="chat-suggestion" data-chat-prompt="Quelles voitures diesel sont disponibles ?">Diesel</button>
+          <button type="button" class="chat-suggestion" data-chat-prompt="Combien de voitures sont disponibles ?">Stock</button>
+          <button type="button" class="chat-suggestion" data-chat-prompt="Aide-moi à choisir une voiture">Aide</button>
+        </div>
+
+        <div class="chatbot-messages" id="chatbot-messages" aria-live="polite"></div>
+
+        <form class="chatbot-form" id="chatbot-form">
+          <input
+            type="text"
+            id="chatbot-input"
+            placeholder="Ex: voitures automatiques sous 20000 DT"
+            autocomplete="off"
+          />
+          <button type="submit" class="btn btn-primary">Envoyer</button>
+        </form>
+      </div>
+    </aside>
+  </div>
+
+  <div class="modal-overlay" id="edit-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Modifier la voiture</h3>
+        <button class="modal-close" onclick="closeEditModal()">&times;</button>
+      </div>
+      <form id="edit-car-form" class="form-grid" onsubmit="handleEditCar(event)">
+        <input type="hidden" id="e-id" />
+        <div class="form-group">
+          <label for="e-marque">Marque</label>
+          <input type="text" id="e-marque" required />
+        </div>
+        <div class="form-group">
+          <label for="e-modele">Modele</label>
+          <input type="text" id="e-modele" required />
+        </div>
+        <div class="form-group">
+          <label for="e-annee">Annee</label>
+          <input type="number" id="e-annee" min="1900" max="2030" required />
+        </div>
+        <div class="form-group">
+          <label for="e-prix">Prix (DT)</label>
+          <input type="number" id="e-prix" min="0" step="100" required />
+        </div>
+        <div class="form-group">
+          <label for="e-km">Kilometrage</label>
+          <input type="number" id="e-km" min="0" required />
+        </div>
+        <div class="form-group">
+          <label for="e-carburant">Carburant</label>
+          <select id="e-carburant" required>
+            <option value="Essence">Essence</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Electrique">Electrique</option>
+            <option value="Hybride">Hybride</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="e-couleur">Couleur</label>
+          <input type="text" id="e-couleur" required />
+        </div>
+        <div class="form-group">
+          <label for="e-portes">Portes</label>
+          <select id="e-portes" required>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="e-transmission">Transmission</label>
+          <select id="e-transmission" required>
+            <option value="Manuelle">Manuelle</option>
+            <option value="Automatique">Automatique</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="e-statut">Statut</label>
+          <select id="e-statut" required>
+            <option value="disponible">Disponible</option>
+            <option value="vendu">Vendu</option>
+            <option value="reserve">Reserve</option>
+          </select>
+        </div>
+        <div class="form-group full-width">
+          <label for="e-options">Options</label>
+          <input type="text" id="e-options" />
+        </div>
+        <div class="form-group full-width">
+          <label for="e-image">URL Image</label>
+          <input type="url" id="e-image" placeholder="https://example.com/image.jpg" />
+          <div id="e-image-preview" class="image-preview" style="display:none; margin-top:8px;"></div>
+        </div>
+        <div class="form-actions full-width">
+          <button type="submit" class="btn btn-primary btn-lg">Enregistrer</button>
+          <button type="button" class="btn btn-outline btn-lg" onclick="closeEditModal()">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
